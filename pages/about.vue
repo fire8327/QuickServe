@@ -38,9 +38,9 @@
             </div>
             <div class="flex flex-col gap-2">
                 <p class="text-base">Email</p>
-                <NuxtLink to="mailto:jobsearch@mail.ru"
+                <NuxtLink to="mailto:quickserve@mail.ru"
                     class="text-xl font-semibold font-mono text-white transition-all duration-500 hover:text-sky-500">
-                    jobsearch@mail.ru</NuxtLink>
+                    quickserve@mail.ru</NuxtLink>
             </div>
             <div class="flex flex-col gap-2">
                 <p class="text-base">Телефон для связи</p>
