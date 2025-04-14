@@ -4,7 +4,7 @@
 
 @layer base {
     #__nuxt{
-        @apply flex flex-col min-h-screen text-[#f7f7f7]/80 bg-[#131313] font-medium text-lg
+        @apply flex flex-col min-h-screen text-[#A0A0A0] bg-[#1A1A1A] font-medium text-lg
     }
         
     :root{
@@ -36,5 +36,5 @@
 }
 
 .mainHeading {
-    @apply text-3xl text-[#f7f7f7] font-semibold font-mono
+    @apply text-2xl text-white font-semibold font-mono
 }
