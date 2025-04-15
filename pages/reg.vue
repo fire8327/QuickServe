@@ -1,5 +1,5 @@
 <template>
-    <FormKit @submit="regUser" type="form" :actions="false" messages-class="hidden" form-class="flex flex-col gap-6 items-center justify-center grow">
+    <FormKit @submit="regUser" type="form" :actions="false" messages-class="hidden" form-class="flex flex-col gap-6 items-center justify-center grow text-[#1C1C1C]">
         <p class="mainHeading">Регистрация</p>
         <div class="flex items-center lg:items-start gap-4 max-lg:flex-col w-full md:w-2/3 lg:w-1/2">
             <FormKit v-model="user.login" validation="required" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Логин" name="Логин" outer-class="w-full lg:w-1/2" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
@@ -11,14 +11,14 @@
                 <Icon class="text-3xl text-sky-500" name="ic:baseline-man"/>
                 <div class="flex flex-col gap-1">
                     <p class="font-semibold text-white">Соискатель</p>
-                    <p class="text-sm">Ищу работу</p>
+                    <p class="text-sm text-[#A0A0A0]">Ищу работу</p>
                 </div>
             </div>
             <div @click="user.role = 'employer'" class="cursor-pointer flex items-center gap-2 p-4 rounded-lg transition-all duration-500 w-full md:w-1/2 border shadow-md" :class="[user.role === 'employer' ? 'border-sky-500 bg-[#000000]/15' : 'bg-[#3C3C3C] border-white/10 hover:opacity-50']">
                 <Icon class="text-3xl text-sky-500" name="hugeicons:permanent-job"/>
                 <div class="flex flex-col gap-1">
                     <p class="font-semibold text-white">Работодатель</p>
-                    <p class="text-sm">Ищу сотрудников</p>
+                    <p class="text-sm text-[#A0A0A0]">Ищу сотрудников</p>
                 </div>
             </div>
         </div>
