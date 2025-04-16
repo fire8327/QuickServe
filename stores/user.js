@@ -49,8 +49,7 @@ export const useUserStore = defineStore("user", () => {
         if (!error) {
           profileCompleted.value =
             data[0].role === 'applicant' ? !!data[0].applicants[0]?.user_id :
-            data[0].role === 'employer' ? !!data[0].employers[0]?.user_id :
-            data[0].role === 'admin' ? !!data[0].admins[0]?.user_id : false
+            data[0].role === 'employer' ? !!data[0].employers[0]?.user_id : false
         }
       }
 
