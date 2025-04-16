@@ -154,6 +154,7 @@
                 </div>
                 <p><span class="font-semibold font-mono">Вакансия:</span> {{ response.vacancy.name }}</p>
                 <p><span class="font-semibold font-mono">Соискатель:</span> {{ response.applicant.surname }} {{ response.applicant.name }}</p>
+                <p><span class="font-semibold font-mono">Телефон:</span> {{ response.applicant.phone }}</p>
                 <p><span class="font-semibold font-mono">Статус:</span> {{ response.status }}</p>
             </div>
         </div>
@@ -501,7 +502,7 @@
     const fetchResponses = async () => {
     const { data } = await supabase
         .from('interactions')
-        .select('*, vacancy:vacancies(name), applicant:applicants(name, surname)')
+        .select('*, vacancy:vacancies(name), applicant:applicants(name, surname, phone)')
         .eq(role === 'applicant' ? 'applicant_id' : 'employer_id', mainId.value)
         .eq('type', 'response')
         responses.value = data || []
