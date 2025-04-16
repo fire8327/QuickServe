@@ -67,5 +67,9 @@
 </template>
 
 <script setup>
-
+/* название и язык страницы */
+useSeoMeta({
+    title: 'О компании',
+    lang: 'ru'
+})
 </script>
