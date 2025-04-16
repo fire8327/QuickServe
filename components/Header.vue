@@ -7,7 +7,8 @@
             </NuxtLink>
             <div class="flex items-center gap-6 max-lg:absolute max-lg:w-full max-lg:flex-col max-lg:py-6 text-white max-lg:bg-[#2C2C2C] max-lg:left-0 max-lg:border-t border-sky-500 transition-all duration-500 z-[5]" :class="isMenuShow ? 'max-lg:top-full' : 'max-lg:top-0 max-lg:-translate-y-full'">
                 <NuxtLink class="flex flex-col after:w-0 after:h-px after:bg-white after:transition-all after:duration-500 hover:after:w-full" to="/">Главная</NuxtLink>
-                <NuxtLink class="flex flex-col after:w-0 after:h-px after:bg-white after:transition-all after:duration-500 hover:after:w-full" to="/vacancies" >Вакансии</NuxtLink>
+                <NuxtLink class="flex flex-col after:w-0 after:h-px after:bg-white after:transition-all after:duration-500 hover:after:w-full" to="/vacancies" v-if="userStore.role === 'applicant'">Вакансии</NuxtLink>
+                <NuxtLink class="flex flex-col after:w-0 after:h-px after:bg-white after:transition-all after:duration-500 hover:after:w-full" to="/resumes" v-if="userStore.role === 'employer'">Резюме</NuxtLink>
                 <NuxtLink class="flex flex-col after:w-0 after:h-px after:bg-white after:transition-all after:duration-500 hover:after:w-full" to="/about">О нас</NuxtLink>
                 <NuxtLink to="/auth" class="flex transition-all duration-500 hover:opacity-70">
                     <Icon class="text-3xl text-sky-500" name="material-symbols:person"/>
@@ -43,5 +44,4 @@ const { messageTitle, messageType } = storeToRefs(useMessagesStore())
 
 /* проверка роли */
 const userStore = useUserStore()
-
 </script>
