@@ -11,7 +11,7 @@
                 </p>
                 <NuxtLink to="/vacancies" class="bg-sky-500 text-white rounded-lg z-[1] py-1.5 px-4 transition-all duration-500 hover:opacity-70">Смотреть вакансии</NuxtLink>
             </div>
-            <div v-if="role === 'employer'" class="flex flex-col items-center relative gap-6 w-fit p-4 lg:p-6 max-w-2xl">
+            <div v-else-if="role === 'employer'" class="flex flex-col items-center relative gap-6 w-fit p-4 lg:p-6 max-w-2xl">
                 <div class="absolute inset-0 backdrop-blur-md rounded-xl"></div>
                 <p class="text-3xl font-mono font-semibold z-[1] max-w-lg">Найдите идеальных сотрудников для вашей команды</p>
                 <p class="opacity-70 text-lg tracking-wide z-[1] max-w-xl">
@@ -19,6 +19,16 @@
                 </p>
                 <NuxtLink to="/resumes" class="bg-sky-500 text-white rounded-lg z-[1] py-1.5 px-4 transition-all duration-500 hover:opacity-70">
                     Смотреть резюме
+                </NuxtLink>
+            </div>
+            <div v-else class="flex flex-col items-center relative gap-6 w-fit p-4 lg:p-6 max-w-2xl">
+                <div class="absolute inset-0 backdrop-blur-md rounded-xl"></div>
+                <p class="text-3xl font-mono font-semibold z-[1] max-w-lg">Найдите работу или сотрудников с нами</p>
+                <p class="opacity-70 text-lg tracking-wide z-[1] max-w-xl">
+                    Присоединяйтесь, чтобы искать вакансии, которые подходят вашему стилю жизни, или находить профессионалов для вашей команды.
+                </p>
+                <NuxtLink to="/auth" class="bg-sky-500 text-white rounded-lg z-[1] py-1.5 px-4 transition-all duration-500 hover:opacity-70">
+                    Войти или зарегистрироваться
                 </NuxtLink>
             </div>
         </div>
