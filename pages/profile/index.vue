@@ -42,7 +42,7 @@
     <div v-if="userStore.profileCompleted">
         <div class="flex flex-col gap-6" v-if="role === 'employer'">
             <p class="mainHeading">Вакансии</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="vacancies && vacancies.length > 0">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-[#1C1C1C]" v-if="vacancies && vacancies.length > 0">
                 <div class="flex flex-col gap-4 p-4 rounded-xl shadow-lg bg-white" v-for="vacancy in vacancies">
                     <button type="button" @click="deleteVacancy(vacancy.id)" class="cursor-pointer self-end">
                         <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
@@ -66,7 +66,7 @@
         </div>
         <div class="flex flex-col gap-6" v-if="role === 'applicant'">
             <p class="mainHeading">Резюме</p>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="resumes && resumes.length > 0">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-[#1C1C1C]" v-if="resumes && resumes.length > 0">
                 <div class="flex flex-col gap-4 p-4 rounded-xl shadow-lg bg-white" v-for="resume in resumes">
                     <button type="button" @click="deleteResume(resume.id)" class="cursor-pointer self-end">
                         <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
@@ -90,7 +90,7 @@
     </div>
     <div class="flex flex-col gap-6" v-if="role === 'applicant' && userStore.profileCompleted">
         <p class="mainHeading">Мои отклики</p>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="responses && responses.length > 0">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-[#1C1C1C]" v-if="responses && responses.length > 0">
             <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="response in responses" :key="response.id">
                 <button type="button" @click="cancelResponse(response.id)" class="cursor-pointer self-end" v-if="response.status === 'На рассмотрении'">
                     <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
@@ -106,7 +106,7 @@
     </div>
     <div class="flex flex-col gap-6" v-if="role === 'applicant' && userStore.profileCompleted">
         <p class="mainHeading">Полученные предложения</p>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="offers && offers.length > 0">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-[#1C1C1C]" v-if="offers && offers.length > 0">
             <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="offer in offers" :key="offer.id">
                 <div class="flex items-center gap-2 self-end" v-if="offer.status === 'На рассмотрении'">
                     <button type="button" @click="acceptOffer(offer.id)" class="cursor-pointer">
@@ -124,7 +124,7 @@
     </div>
     <div class="flex flex-col gap-6" v-if="role === 'employer' && userStore.profileCompleted">
         <p class="mainHeading">Мои предложения</p>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="offers && offers.length > 0">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-[#1C1C1C]" v-if="offers && offers.length > 0">
             <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="offer in offers" :key="offer.id">
                 <button type="button" @click="cancelOffer(offer.id)" class="cursor-pointer self-end" v-if="offer.status === 'На рассмотрении'">
                     <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
@@ -142,7 +142,7 @@
     </div>
     <div class="flex flex-col gap-6" v-if="role === 'employer' && userStore.profileCompleted">
         <p class="mainHeading">Полученные отклики</p>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" v-if="responses && responses.length > 0">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-[#1C1C1C]" v-if="responses && responses.length > 0">
             <div class="flex flex-col gap-4 p-4 rounded-xl bg-white shadow-lg" v-for="response in responses" :key="response.id">
                 <div class="flex items-center gap-2 self-end" v-if="response.status === 'На рассмотрении'">
                     <button type="button" @click="acceptResponse(response.id)" class="cursor-pointer">
@@ -449,7 +449,7 @@
         if(data) resumes.value = data
     }
 
-    //удаление вакаснии 
+    //удаление резюме 
     const deleteResume = async (vacancyId) => {
         const { error } = await supabase
         .from('resumes')
