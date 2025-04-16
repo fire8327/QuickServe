@@ -43,7 +43,7 @@ export const useUserStore = defineStore("user", () => {
     async function updateProfileCompleted() {
         const { data, error } = await supabase
           .from('users')
-          .select('role, applicants (user_id), employers (user_id), admins (user_id)')
+          .select('role, applicants (user_id), employers (user_id)')
           .eq('id', id.value)
     
         if (!error) {
