@@ -450,17 +450,45 @@
     }
 
     //удаление резюме 
-    const deleteResume = async (vacancyId) => {
-        const { error } = await supabase
-        .from('resumes')
-        .delete()
-        .eq('id', vacancyId)
+    const deleteResume = async (resumeId) => {
+        try {
+            // 1. Получаем данные резюме, чтобы узнать путь к файлу
+            const { data: resume, error: fetchError } = await supabase
+                .from('resumes')
+                .select('resume')
+                .eq('id', resumeId)
+                .single()
 
-        if(!error) {
+            if (fetchError) {
+                throw new Error('Ошибка при получении данных резюме')
+            }
+
+            // 2. Удаляем файл из бакета, если resume существует
+            if (resume.resume) {
+                const { error: storageError } = await supabase.storage
+                    .from('files') //
+                    .remove([`resumes/${resume.resume}`])
+
+                if (storageError) {
+                    throw new Error('Ошибка при удалении файла из хранилища')
+                }
+            }
+
+            // 3. Удаляем запись из таблицы resumes
+            const { error: deleteError } = await supabase
+                .from('resumes')
+                .delete()
+                .eq('id', resumeId)
+
+            if (deleteError) {
+                throw new Error('Ошибка при удалении резюме')
+            }
+
+            // 4. Успешное выполнение
             showMessage('Резюме удалено!', true)
             await getResumesData()
-        } else {
-            showMessage('Произошла ошибка!', false)
+        } catch (error) {
+            showMessage(error.message || 'Произошла ошибка!', false)
         }
     }
 
