@@ -131,7 +131,7 @@
                 </button>
                 <p><span class="font-semibold font-mono">Резюме:</span> {{ offer.resume.name }}</p>
                 <p><span class="font-semibold font-mono">Статус:</span> {{ offer.status }}</p>
-                <a v-if="offer.resume.resume" :href="`https://unhdwdwoeepepaliejow.supabase.co/storage/v1/object/public/files/resumes/${offer.resume.resume}`" download="Резюме соискателя" target="_blank" class="font-semibold font-mono w-fit flex flex-col after:w-0 after:h-[3px] after:rounded-full after:bg-[#141414]/80 after:transition-all after:duration-500 hover:after:w-full">Скачать резюме</a> 
+                <a v-if="offer.resume.resume" :href="`https://nwsapzsylxovhsbbxnhq.supabase.co/storage/v1/object/public/files/resumes/${offer.resume.resume}`" download="Резюме соискателя" target="_blank" class="font-semibold font-mono w-fit flex flex-col after:w-0 after:h-[3px] after:rounded-full after:bg-[#141414]/80 after:transition-all after:duration-500 hover:after:w-full">Скачать резюме</a> 
                 <p v-else class="font-semibold font-mono">Ошибка: резюме не загружено</p>
             </div>
         </div>

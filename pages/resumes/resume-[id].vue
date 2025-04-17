@@ -20,7 +20,7 @@
             <p><span class="font-semibold font-mono text-white">ФИО:</span> {{ resume?.applicants.surname }} {{
                 resume?.applicants.name }} {{ resume?.applicants.patronymic }}</p>
             <p><span class="font-semibold font-mono text-white">Номер телефона:</span> {{ resume?.applicants.phone }}</p>
-            <a v-if="resume?.resume" :href="`https://unhdwdwoeepepaliejow.supabase.co/storage/v1/object/public/files/resumes/${resume?.resume}`" download="Резюме соискателя" target="_blank" class="font-semibold text-xl text-white font-mono w-fit flex flex-col after:w-0 after:h-[3px] after:rounded-full after:bg-white after:transition-all after:duration-500 hover:after:w-full">Скачать резюме</a> 
+            <a v-if="resume?.resume" :href="`https://nwsapzsylxovhsbbxnhq.supabase.co/storage/v1/object/public/files/resumes/${resume?.resume}`" download="Резюме соискателя" target="_blank" class="font-semibold text-xl text-white font-mono w-fit flex flex-col after:w-0 after:h-[3px] after:rounded-full after:bg-white after:transition-all after:duration-500 hover:after:w-full">Скачать резюме</a> 
             <p v-else class="text-xl text-white font-semibold font-mono">Ошибка: резюме не загружено</p>
         </div>
         <button @click="sendOffer(resume?.id)"
