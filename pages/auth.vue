@@ -46,13 +46,11 @@ const user = ref({
 })
 
 
-/* создание сообщений и подключение хранилищ */
-const { showMessage } = useMessagesStore()
-const { login } = useUserStore()
+/* подключение хранилищ */
+const userStore = useUserStore()
 
 
-/* подключение БД и роутера */
-const supabase = useSupabaseClient()
+/* подключение роутера */
 const router = useRouter()
 
 
@@ -60,32 +58,11 @@ const router = useRouter()
 const isAuthDisabled = ref(false)
 const authUser = async() => {  
     isAuthDisabled.value = true
-    const { data: users, error } = await supabase
-    .from('users')
-    .select("*, applicants(*), employers(*)")
-    .eq('login', user.value.login)
 
-    if (!users[0]) {
-        user.value.login = ""
-        isAuthDisabled.value = false
-        return showMessage("Неверно введен логин!", false)              
+    const result = await userStore.signIn(user.value.login, user.value.password)
+    if (result) {
+        await router.push('/')
     }
-
-    if (user.value.password !== users[0].password) {
-        user.value.password = ""
-        isAuthDisabled.value = false
-        return showMessage('Неверно введен пароль!', false)            
-    }
-
-    // Проверка заполненности профиля
-    const profileCompleted = 
-        users[0].role === 'applicant' ? !!users[0].applicants[0]?.user_id :
-        users[0].role === 'employer' ? !!users[0].employers[0]?.user_id : false
-
-
-    showMessage('Успешный вход!', true)
-    login(users[0].id, users[0].role, profileCompleted)
     isAuthDisabled.value = false
-    router.push('/profile')
 } 
 </script>
