@@ -14,8 +14,7 @@ function useSynchronizedCookie(key, defaultValue) {
 export const useUserStore = defineStore("user", () => {
     const authenticated = useSynchronizedCookie('authenticated', false)
     const id = useSynchronizedCookie('id', null)
-    const role = useSynchronizedCookie('role', null)
-    const profileCompleted = useSynchronizedCookie('profileCompleted', false);
+    const isProvider = useSynchronizedCookie('isProvider', false)
 
     /* сообщения и роутер */
     const { showMessage } = useMessagesStore()
@@ -23,44 +22,41 @@ export const useUserStore = defineStore("user", () => {
     const supabase = useSupabaseClient()
 
     // функции для входа и выхода из аккаунта
-    function login(userId, userRole, isProfileCompleted) {
+    function login(userId, userIsProvider) {
         authenticated.value = true
         id.value = userId
-        role.value = userRole
-        profileCompleted.value = isProfileCompleted
+        isProvider.value = userIsProvider
     }
 
     function logout() {
         authenticated.value = false
         id.value = null
-        role.value = null
-        profileCompleted.value = false
+        isProvider.value = false
         showMessage("Успешный выход", true)
         router.push("/")
     }
 
     // аутентификация
-    async function signIn(login, password) {
+    async function signIn(loginParam, password) {
         const { data: users, error } = await supabase
-          .from('users')
-          .select('*')
-          .eq('login', login)
+            .from('users')
+            .select('*')
+            .eq('login', loginParam)
 
         if (error) {
-          console.error('Ошибка БД:', error)
-          return showMessage('Произошла ошибка при входе', false)
+            console.error('Ошибка БД:', error)
+            return showMessage('Произошла ошибка при входе', false)
         }
 
         if (!users || users.length === 0) {
-          return showMessage('Пользователь не найден', false)
+            return showMessage('Пользователь не найден', false)
         }
 
         if (users[0].password !== password) {
-          return showMessage('Неверный пароль', false)
+            return showMessage('Неверный пароль', false)
         }
 
-        const isProfileCompleted = !!(users[0].first_name && users[0].last_name && users[0].phone)
-        login(users[0].id, users[0].is_provider, isProfileCompleted)
+        login(users[0].id, users[0].is_provider)
         showMessage("Успешный вход", true)
         return users[0]
     }
@@ -102,22 +98,10 @@ export const useUserStore = defineStore("user", () => {
             return showMessage('Ошибка регистрации', false)
         }
         
-        login(data.id, data.is_provider, false)
+        login(data.id, data.is_provider)
         showMessage("Успешная регистрация", true)
         return data
     }
 
-    // обновление профиля
-    async function updateProfileCompleted() {
-        const { data, error } = await supabase
-          .from('users')
-          .select('first_name, last_name, phone')
-          .eq('id', id.value)
-    
-        if (!error && data) {
-          profileCompleted.value = !!(data.first_name && data.last_name && data.phone)
-        }
-      }
-
-    return { authenticated, id, role, profileCompleted, login, logout, signIn, signUp, updateProfileCompleted }
+    return { authenticated, id, isProvider, login, logout, signIn, signUp }
 })
