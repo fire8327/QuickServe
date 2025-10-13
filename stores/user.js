@@ -88,7 +88,8 @@ export const useUserStore = defineStore("user", () => {
                 last_name: userData.last_name,
                 patronymic: userData.patronymic,
                 phone: userData.phone,
-                is_provider: userData.is_provider || false
+                is_provider: userData.is_provider || false,
+                avatar_url: userData.avatar_url || null
             })
             .select()
             .single()
