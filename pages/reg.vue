@@ -78,7 +78,7 @@ const { showMessage } = useMessagesStore()
 
 /* получение аватара */
 const getAvatarUrl = (fileName) => {
-    const { data } = supabase.storage.from('files/avatars').getPublicUrl(fileName)
+    const { data } = supabase.storage.from('files').getPublicUrl(`avatars/${fileName}`)
     return data.publicUrl
 }
 
@@ -115,9 +115,9 @@ const regUser = async () => {
             const extension = file.name.split('.').pop()
             const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${extension}`
 
-            const { error: uploadError } = await supabase.storage
-                .from('files/avatars')
-                .upload(`${fileName}`, file)
+                   const { error: uploadError } = await supabase.storage
+                       .from('files')
+                       .upload(`avatars/${fileName}`, file)
 
             if (uploadError) throw uploadError
 

@@ -14,7 +14,7 @@
                     <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
                 </button>
             </div>
-            <FormKit v-else @change="handleAvatarChange" accept="image/*" messages-class="text-[#E9556D] font-mono" label-class="text-white" file-list-class="text-white" no-files-class="text-white" type="file" label="Аватар" name="Аватар" outer-class="w-full md:w-2/3 lg:w-1/2" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
+            <FormKit v-else @change="handleAvatarChange" accept="image/*" validation="required" messages-class="text-[#E9556D] font-mono" label-class="text-white" file-list-class="text-white" no-files-class="text-white" type="file" label="Аватар" name="Аватар" outer-class="w-full md:w-2/3 lg:w-1/2" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
             <button :disabled="isLoading" :class="{ 'opacity-50 cursor-not-allowed': isLoading }" type="submit" class="px-4 py-2 border border-sky-500 bg-sky-500 text-white rounded-full w-[160px] text-center transition-all duration-500 hover:text-sky-500 hover:bg-transparent">{{ isLoading ? 'Сохранение...' : 'Сохранить' }}</button>
         </FormKit>
     </div>
@@ -112,9 +112,10 @@
         avatar_url: ''
     })
 
-    /* загрузка и аватар */
-    const avatarFile = ref(null)
-    const avatarPreview = ref('')
+       /* загрузка и аватар */
+       const avatarFile = ref(null)
+       const avatarPreview = ref('')
+       const oldAvatarFileName = ref('')
 
     /* форма настроек */
     const privacyForm = ref({
@@ -141,29 +142,30 @@
 
         if (error) throw error
 
-        if (data) {
-            userForm.value = {
-                first_name: data.first_name || '',
-                last_name: data.last_name || '',
-                patronymic: data.patronymic || '',
-                phone: data.phone || '',
-                avatar_url: data.avatar_url || ''
-            }
-            privacyForm.value = {
-                login: data.login || '',
-                phone: data.phone || ''
-            }
-            
-            // Показываем текущий аватар
-            if (data.avatar_url) {
-                avatarPreview.value = getAvatarUrl(data.avatar_url)
-            }
-        }
+           if (data) {
+               userForm.value = {
+                   first_name: data.first_name || '',
+                   last_name: data.last_name || '',
+                   patronymic: data.patronymic || '',
+                   phone: data.phone || '',
+                   avatar_url: data.avatar_url || ''
+               }
+               privacyForm.value = {
+                   login: data.login || '',
+                   phone: data.phone || ''
+               }
+               
+               // Сохраняем имя старого файла и показываем текущий аватар
+               if (data.avatar_url) {
+                   oldAvatarFileName.value = data.avatar_url
+                   avatarPreview.value = getAvatarUrl(data.avatar_url)
+               }
+           }
     }
 
     /* получение аватара */
     const getAvatarUrl = (fileName) => {
-        const { data } = supabase.storage.from('files/avatars').getPublicUrl(fileName)
+        const { data } = supabase.storage.from('files').getPublicUrl(`avatars/${fileName}`)
         return data.publicUrl
     }
 
@@ -187,47 +189,80 @@
         userForm.value.avatar_url = ''
     }
 
-    /* сохранение профиля */
-    const saveProfile = async () => {
-        isLoading.value = true
+     /* сохранение профиля */
+     const saveProfile = async () => {
+         isLoading.value = true
 
-        try {
-            let avatarFileName = userForm.value.avatar_url
+         try {
+             let avatarFileName = userForm.value.avatar_url
 
-            if (avatarFile.value) {
-                const file = avatarFile.value
-                const extension = file.name.split('.').pop()
-                const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${extension}`
+             if (avatarFile.value) {
+                 // Удаляем старый аватар из Storage, если он есть
+                 if (oldAvatarFileName.value) {
+                     console.log('Удаляем старый файл:', oldAvatarFileName.value)
+                     
+                     // Сначала проверяем, существует ли файл
+                     const { data: fileExists } = await supabase.storage
+                         .from('files')
+                         .list('avatars', {
+                             search: oldAvatarFileName.value
+                         })
+                     
+                     if (fileExists && fileExists.length > 0) {
+                         const { error: deleteError } = await supabase.storage
+                             .from('files')
+                             .remove([`avatars/${oldAvatarFileName.value}`])
+                         if (deleteError) {
+                             console.error('Ошибка удаления старого аватара:', deleteError)
+                         } else {
+                             console.log('Старый файл успешно удален')
+                         }
+                     } else {
+                         console.log('Старый файл не найден в Storage, пропускаем удаление')
+                     }
+                 }
 
-                const { error: uploadError } = await supabase.storage
-                    .from('files/avatars')
-                    .upload(`${fileName}`, file)
+                 // Загружаем новый аватар
+                 const file = avatarFile.value
+                 const extension = file.name.split('.').pop()
+                 const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${extension}`
 
-                if (uploadError) throw uploadError
+                 const { error: uploadError } = await supabase.storage
+                     .from('files')
+                     .upload(`avatars/${fileName}`, file)
 
-                avatarFileName = fileName
-            }
+                 if (uploadError) throw uploadError
 
-            const { error } = await supabase
-                .from('users')
-                .update({
-                    first_name: userForm.value.first_name,
-                    last_name: userForm.value.last_name,
-                    patronymic: userForm.value.patronymic,
-                    phone: userForm.value.phone,
-                    avatar_url: avatarFileName
-                })
-                .eq('id', userId)
+                 avatarFileName = fileName
+             }
 
-            if (error) throw error
+             const { error } = await supabase
+                 .from('users')
+                 .update({
+                     first_name: userForm.value.first_name,
+                     last_name: userForm.value.last_name,
+                     patronymic: userForm.value.patronymic,
+                     phone: userForm.value.phone,
+                     avatar_url: avatarFileName
+                 })
+                 .eq('id', userId)
 
-            showMessage('Профиль обновлён!', true)
-        } catch (error) {
-            showMessage('Ошибка при сохранении: ' + error.message, false)
-        } finally {
-            isLoading.value = false
-        }
-    }
+             if (error) throw error
+
+             showMessage('Профиль обновлён!', true)
+             
+             // Обновляем предпросмотр после успешного сохранения
+             if (avatarFile.value) {
+                 avatarPreview.value = getAvatarUrl(avatarFileName)
+                 oldAvatarFileName.value = avatarFileName
+                 avatarFile.value = null
+             }
+         } catch (error) {
+             showMessage('Ошибка при сохранении: ' + error.message, false)
+         } finally {
+             isLoading.value = false
+         }
+     }
 
     /* обновление настроек */
     const updPrivacy = async () => {
