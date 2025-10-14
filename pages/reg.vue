@@ -8,7 +8,7 @@
             </div>
             <FormKit v-model="user.patronymic" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Отчество" name="Отчество" outer-class="w-full md:w-2/3 lg:w-1/2" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
             <FormKit v-model="user.phone" validation="required" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Телефон" name="Телефон" outer-class="w-full md:w-2/3 lg:w-1/2" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
-            <div class="relative w-full md:w-2/3 lg:w-1/2 group rounded-xl overflow-hidden" v-if="avatarPreview">
+            <div class="relative w-full md:w-1/4 group rounded-xl overflow-hidden" v-if="avatarPreview">
                 <img :src="avatarPreview" alt="" class="object-cover object-center aspect-square w-full">
                 <button type="button" @click="removeAvatarFile" class="absolute inset-0 bg-black/70 flex items-center justify-center transition-all duration-500 [@media(pointer:coarse)]:opacity-100 [@media(pointer:fine)]:opacity-0 group-hover:opacity-100">
                     <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>

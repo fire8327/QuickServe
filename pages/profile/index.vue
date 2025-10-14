@@ -1,88 +1,97 @@
 <template>
-    <div class="flex flex-col gap-6">
-        <p class="mainHeading">Данные профиля</p>
-        <FormKit @submit="saveProfile" type="form" :actions="false" messages-class="hidden" form-class="text-[#1C1C1C] flex flex-col gap-6 items-center justify-center">
-            <div class="flex items-center lg:items-start gap-4 max-lg:flex-col w-full md:w-2/3 lg:w-1/2">
-                <FormKit v-model="userForm.last_name" validation="required" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Фамилия" name="Фамилия" outer-class="w-full lg:w-1/3" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
-                <FormKit v-model="userForm.first_name" validation="required" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Имя" name="Имя" outer-class="w-full lg:w-1/3" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
-                <FormKit v-model="userForm.patronymic" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Отчество" name="Отчество" outer-class="w-full lg:w-1/3" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
-            </div>
-            <FormKit v-model="userForm.phone" validation="required" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Телефон" name="Телефон" outer-class="w-full md:w-2/3 lg:w-1/2" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
-            <div class="relative w-full md:w-2/3 lg:w-1/2 group rounded-xl overflow-hidden" v-if="avatarPreview">
-                <img :src="avatarPreview" alt="" class="object-cover object-center aspect-square w-full">
-                <button type="button" @click="removeAvatarFile" class="absolute inset-0 bg-black/70 flex items-center justify-center transition-all duration-500 [@media(pointer:coarse)]:opacity-100 [@media(pointer:fine)]:opacity-0 group-hover:opacity-100">
-                    <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
-                </button>
-            </div>
-            <FormKit v-else @change="handleAvatarChange" accept="image/*" validation="required" messages-class="text-[#E9556D] font-mono" label-class="text-white" file-list-class="text-white" no-files-class="text-white" type="file" label="Аватар" name="Аватар" outer-class="w-full md:w-2/3 lg:w-1/2" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
-            <button :disabled="isLoading" :class="{ 'opacity-50 cursor-not-allowed': isLoading }" type="submit" class="px-4 py-2 border border-sky-500 bg-sky-500 text-white rounded-full w-[160px] text-center transition-all duration-500 hover:text-sky-500 hover:bg-transparent">{{ isLoading ? 'Сохранение...' : 'Сохранить' }}</button>
-        </FormKit>
+    <div v-if="isBooting" class="flex flex-col gap-6">
+        <Loader />
     </div>
-    
-    <!-- Статистика -->
-    <div class="flex flex-col gap-6">
-        <p class="mainHeading">Статистика</p>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="flex flex-col gap-2 rounded-xl bg-[#3C3C3C] p-4 items-center text-center shadow-[0px_0px_20px_-13px_black]">
-                <p class="px-4 py-1 text-2xl font-mono bg-amber-500 text-white rounded-lg">{{ averageRating }}</p>
-                <p class="text-white font-mono">{{ isProvider ? 'Рейтинг' : 'Строгость' }}</p>
-            </div>
-            <div class="flex flex-col gap-2 rounded-xl bg-[#3C3C3C] p-4 items-center text-center shadow-[0px_0px_20px_-13px_black]">
-                <p class="px-4 py-1 text-2xl font-mono bg-sky-500 text-white rounded-lg">{{ ordersCount }}</p>
-                <p class="text-white font-mono">Заказов</p>
-            </div>
-            <div class="flex flex-col gap-2 rounded-xl bg-[#3C3C3C] p-4 items-center text-center shadow-[0px_0px_20px_-13px_black]">
-                <p class="px-4 py-1 text-2xl font-mono bg-green-500 text-white rounded-lg">{{ reviewsCount }}</p>
-                <p class="text-white font-mono">Отзывов</p>
-            </div>
-            <div class="flex flex-col gap-2 rounded-xl bg-[#3C3C3C] p-4 items-center text-center shadow-[0px_0px_20px_-13px_black]">
-                <p class="px-4 py-1 text-2xl font-mono bg-violet-500 text-white rounded-lg">{{ daysWithUs }}</p>
-                <p class="text-white font-mono">Дней с нами</p>
+    <template v-else>
+        <div class="flex flex-col gap-6">
+            <p class="mainHeading">Данные профиля</p>
+            <FormKit @submit="saveProfile" type="form" :actions="false" messages-class="hidden" form-class="text-[#1C1C1C] flex flex-col gap-6 items-center justify-center">
+                <div class="flex items-center lg:items-start gap-4 max-lg:flex-col w-full md:w-2/3 lg:w-1/2">
+                    <FormKit v-model="userForm.last_name" validation="required" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Фамилия" name="Фамилия" outer-class="w-full lg:w-1/3" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
+                    <FormKit v-model="userForm.first_name" validation="required" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Имя" name="Имя" outer-class="w-full lg:w-1/3" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
+                    <FormKit v-model="userForm.patronymic" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Отчество" name="Отчество" outer-class="w-full lg:w-1/3" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
+                </div>
+                <FormKit v-model="userForm.phone" validation="required" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Телефон" name="Телефон" outer-class="w-full md:w-2/3 lg:w-1/2" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
+                <div class="relative w-full md:w-1/4 group rounded-xl overflow-hidden" v-if="avatarPreview">
+                    <img :src="avatarPreview" alt="" class="object-cover object-center aspect-square w-full">
+                    <button type="button" @click="removeAvatarFile" class="absolute inset-0 bg-black/70 flex items-center justify-center transition-all duration-500 [@media(pointer:coarse)]:opacity-100 [@media(pointer:fine)]:opacity-0 group-hover:opacity-100">
+                        <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
+                    </button>
+                </div>
+                <FormKit v-else @change="handleAvatarChange" accept="image/*" validation="required" messages-class="text-[#E9556D] font-mono" label-class="text-white" file-list-class="text-white" no-files-class="text-white" type="file" label="Аватар" name="Аватар" outer-class="w-full md:w-2/3 lg:w-1/2" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
+                <button :disabled="isLoading" :class="{ 'opacity-50 cursor-not-allowed': isLoading }" type="submit" class="px-4 py-2 border border-sky-500 bg-sky-500 text-white rounded-full w-[160px] text-center transition-all duration-500 hover:text-sky-500 hover:bg-transparent">{{ isLoading ? 'Сохранение...' : 'Сохранить' }}</button>
+            </FormKit>
+        </div>
+        
+        <!-- Статистика -->
+        <div class="flex flex-col gap-6">
+            <p class="mainHeading">Статистика</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="flex flex-col gap-2 rounded-xl bg-[#3C3C3C] p-4 items-center text-center shadow-[0px_0px_20px_-13px_black]">
+                    <p class="px-4 py-1 text-2xl font-mono bg-amber-500 text-white rounded-lg">{{ averageRating }}</p>
+                    <p class="text-white font-mono">{{ isProvider ? 'Рейтинг' : 'Строгость' }}</p>
+                </div>
+                <div class="flex flex-col gap-2 rounded-xl bg-[#3C3C3C] p-4 items-center text-center shadow-[0px_0px_20px_-13px_black]">
+                    <p class="px-4 py-1 text-2xl font-mono bg-sky-500 text-white rounded-lg">{{ ordersCount }}</p>
+                    <p class="text-white font-mono">Заказов</p>
+                </div>
+                <div class="flex flex-col gap-2 rounded-xl bg-[#3C3C3C] p-4 items-center text-center shadow-[0px_0px_20px_-13px_black]">
+                    <p class="px-4 py-1 text-2xl font-mono bg-green-500 text-white rounded-lg">{{ reviewsCount }}</p>
+                    <p class="text-white font-мono">Отзывов</p>
+                </div>
+                <div class="flex flex-col gap-2 rounded-xl bg-[#3C3C3C] p-4 items-center text-center shadow-[0px_0px_20px_-13px_black]">
+                    <p class="px-4 py-1 text-2xl font-mono bg-violet-500 text-white rounded-lg">{{ daysWithUs }}</p>
+                    <p class="text-white font-mono">Дней с нами</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Мои услуги (только для исполнителей) -->
-    <div class="flex flex-col gap-6" v-if="userStore.isProvider">
-        <div class="flex justify-between items-center">
-            <p class="mainHeading">Мои услуги</p>
-            <NuxtLink to="/profile/add-service" class="px-4 py-2 border border-sky-500 bg-sky-500 text-white rounded-full text-center transition-all duration-500 hover:text-sky-500 hover:bg-transparent">+ Добавить услугу</NuxtLink>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-[#1C1C1C]" v-if="services && services.length > 0">
-            <div class="flex flex-col gap-4 p-4 rounded-xl shadow-lg bg-white" v-for="service in services" :key="service.id">
-                <button type="button" @click="deleteService(service.id)" class="cursor-pointer self-end">
-                    <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
-                </button>
-                <p class="font-semibold">{{ service.title }}</p>
-                <p class="line-clamp-2">{{ service.description || 'Описание отсутствует' }}</p>
-                <p><span class="font-semibold font-mono">Цена: </span>{{ formatPrice(service.price) }}</p>
-                <p><span class="font-semibold font-mono">Категория: </span>{{ service.categories?.name || 'Без категории' }}</p>
+        <!-- Мои услуги (только для исполнителей) -->
+        <div class="flex flex-col gap-6" v-if="userStore.isProvider">
+            <div class="flex justify-between items-center">
+                <p class="mainHeading">Мои услуги</p>
+                <NuxtLink to="/profile/add-service" class="px-4 py-2 border border-sky-500 bg-sky-500 text-white rounded-full text-center transition-all duration-500 hover:text-sky-500 hover:bg-transparent">+ Добавить услугу</NuxtLink>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-[#1C1C1C]" v-if="services && services.length > 0">
+                <div class="flex flex-col gap-4 p-4 rounded-xl shadow-lg bg-white" v-for="service in services" :key="service.id">
+                    <div class="flex items-center justify-end gap-2">
+                        <NuxtLink :to="`/services/${service.id}`" class="px-3 py-1 rounded-full text-white bg-sky-500 text-sm transition-all duration-300 hover:opacity-80">Просмотреть</NuxtLink>
+                        <NuxtLink :to="`/profile/edit-service-${service.id}`" class="px-3 py-1 rounded-full text-white bg-amber-500 text-sm transition-all duration-300 hover:opacity-80">Изменить</NuxtLink>
+                        <button type="button" @click="deleteService(service.id)" class="cursor-pointer">
+                            <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
+                        </button>
+                    </div>
+                    <p class="font-semibold">{{ service.title }}</p>
+                    <p class="line-clamp-2">{{ service.description || 'Описание отсутствует' }}</p>
+                    <p><span class="font-semibold font-mono">Цена: </span>{{ formatPrice(service.price) }}</p>
+                    <p><span class="font-semibold font-mono">Категория: </span>{{ service.categories?.name || 'Без категории' }}</p>
+                </div>
+            </div>
+            <div v-else class="flex flex-col w-full items-center gap-4 text-center">
+                <Icon name="material-symbols:build" class="text-6xl text-gray-400"/>
+                <p class="text-xl text-white font-semibold font-mono">У вас пока нет услуг</p>
+                <NuxtLink to="/profile/add-service" class="px-4 py-2 border border-sky-500 bg-sky-500 text-white rounded-full text-center transition-all duration-500 hover:text-sky-500 hover:bg-transparent">Добавить первую услугу</NuxtLink>
             </div>
         </div>
-        <div v-else class="flex flex-col w-full items-center gap-4 text-center">
-            <Icon name="material-symbols:build" class="text-6xl text-gray-400"/>
-            <p class="text-xl text-white font-semibold font-mono">У вас пока нет услуг</p>
-            <NuxtLink to="/profile/add-service" class="px-4 py-2 border border-sky-500 bg-sky-500 text-white rounded-full text-center transition-all duration-500 hover:text-sky-500 hover:bg-transparent">Добавить первую услугу</NuxtLink>
+
+        <!-- Настройки аккаунта -->
+        <div class="flex flex-col gap-6">
+            <p class="mainHeading">Настройки аккаунта</p>
+            <FormKit :form-attrs="{ autocomplete: 'off' }" @submit="updPrivacy" type="form" :actions="false" messages-class="hidden" form-class="text-[#1C1C1C] flex flex-col gap-6 items-center justify-center">
+                <div class="flex items-center lg:items-start gap-4 max-lg:flex-col w-full md:w-2/3 lg:w-1/2">
+                    <FormKit v-model="privacyForm.login" validation="required" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Логин" name="Логин" outer-class="w-full lg:w-1/2" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
+                    <FormKit v-model="privacyForm.phone" validation="required" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Телефон" name="Телефон" outer-class="w-full lg:w-1/2" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
+                </div>
+                <button :disabled="isLoading" :class="{ 'opacity-50 cursor-not-allowed': isLoading }" type="submit" class="px-4 py-2 border border-sky-500 bg-sky-500 text-white rounded-full w-[160px] text-center transition-all duration-500 hover:text-sky-500 hover:bg-transparent">{{ isLoading ? 'Сохранение...' : 'Обновить' }}</button>
+            </FormKit>
         </div>
-    </div>
 
-    <!-- Настройки аккаунта -->
-    <div class="flex flex-col gap-6">
-        <p class="mainHeading">Настройки аккаунта</p>
-        <FormKit :form-attrs="{ autocomplete: 'off' }" @submit="updPrivacy" type="form" :actions="false" messages-class="hidden" form-class="text-[#1C1C1C] flex flex-col gap-6 items-center justify-center">
-            <div class="flex items-center lg:items-start gap-4 max-lg:flex-col w-full md:w-2/3 lg:w-1/2">
-                <FormKit v-model="privacyForm.login" validation="required" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Логин" name="Логин" outer-class="w-full lg:w-1/2" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
-                <FormKit v-model="privacyForm.phone" validation="required" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Телефон" name="Телефон" outer-class="w-full lg:w-1/2" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
-            </div>
-            <button :disabled="isLoading" :class="{ 'opacity-50 cursor-not-allowed': isLoading }" type="submit" class="px-4 py-2 border border-sky-500 bg-sky-500 text-white rounded-full w-[160px] text-center transition-all duration-500 hover:text-sky-500 hover:bg-transparent">{{ isLoading ? 'Сохранение...' : 'Обновить' }}</button>
-        </FormKit>
-    </div>
-
-    <!-- Выход -->
-    <div class="flex flex-col gap-6">
-        <p class="mainHeading">Выход</p>
-        <button @click="logout" class="px-4 py-2 border border-red-500 bg-red-500 text-white rounded-full w-[160px] text-center transition-all duration-500 hover:text-red-500 hover:bg-transparent">Выйти</button>
-    </div>
+        <!-- Выход -->
+        <div class="flex flex-col gap-6">
+            <p class="mainHeading">Выход</p>
+            <button @click="logout" class="px-4 py-2 border border-red-500 bg-red-500 text-white rounded-full w-[160px] text-center transition-all duration-500 hover:text-red-500 hover:bg-transparent">Выйти</button>
+        </div>
+    </template>
 </template>
 
 <script setup>
@@ -102,6 +111,7 @@
 
     /* загрузка */
     const isLoading = ref(false)
+    const isBooting = ref(true)
 
     /* форма пользователя */
     const userForm = ref({
@@ -408,5 +418,6 @@
         await loadProfileData()
         await loadStats()
         await loadServices()
+        isBooting.value = false
     })
 </script>

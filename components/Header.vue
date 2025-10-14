@@ -13,13 +13,9 @@
                     class="px-3 py-1 bg-[#3C3C3C] rounded-xl shadow-md transition-all duration-500 hover:bg-[#000000]/15 hover:border-sky-500 border border-transparent">
                     Главная
                 </NuxtLink>
-                <NuxtLink to="/vacancies" v-if="userStore.role === 'applicant'"
+                <NuxtLink to="/services"
                     class="px-3 py-1 bg-[#3C3C3C] rounded-xl shadow-md transition-all duration-500 hover:bg-[#000000]/15 hover:border-sky-500 border border-transparent">
-                    Вакансии
-                </NuxtLink>
-                <NuxtLink to="/resumes" v-if="userStore.role === 'employer'"
-                    class="px-3 py-1 bg-[#3C3C3C] rounded-xl shadow-md transition-all duration-500 hover:bg-[#000000]/15 hover:border-sky-500 border border-transparent">
-                    Резюме
+                    Услуги
                 </NuxtLink>
                 <NuxtLink to="/about"
                     class="px-3 py-1 bg-[#3C3C3C] rounded-xl shadow-md transition-all duration-500 hover:bg-[#000000]/15 hover:border-sky-500 border border-transparent">
@@ -27,8 +23,8 @@
                 </NuxtLink>
             </div>
             <div class="flex items-center gap-4">
-                <NuxtLink to="/auth" class="flex transition-all duration-500 hover:opacity-70 max-lg:hidden">
-                    <Icon class="text-3xl text-sky-500" name="material-symbols:person" />
+                <NuxtLink :to="authenticated ? '/profile' : '/auth'" class="flex transition-all duration-500 hover:opacity-70 max-lg:hidden" :title="authenticated ? 'Профиль' : 'Войти'">
+                    <Icon class="text-3xl text-sky-500" name="material-symbols:person"/>
                 </NuxtLink>
                 <button @click="isMenuShow = !isMenuShow" class="lg:hidden flex cursor-pointer">
                     <Icon class="text-3xl text-sky-500"
@@ -48,20 +44,15 @@
                 </NuxtLink>
                 <NuxtLink
                     class="flex flex-col after:w-0 after:h-px after:bg-white after:transition-all after:duration-500 hover:after:w-full"
-                    to="/vacancies" v-if="userStore.role === 'applicant'" @click="isMenuShow = false">
-                    Вакансии
-                </NuxtLink>
-                <NuxtLink
-                    class="flex flex-col after:w-0 after:h-px after:bg-white after:transition-all after:duration-500 hover:after:w-full"
-                    to="/resumes" v-if="userStore.role === 'employer'" @click="isMenuShow = false">
-                    Резюме
+                    to="/services" @click="isMenuShow = false">
+                    Услуги
                 </NuxtLink>
                 <NuxtLink
                     class="flex flex-col after:w-0 after:h-px after:bg-white after:transition-all after:duration-500 hover:after:w-full"
                     to="/about" @click="isMenuShow = false">
                     О нас
                 </NuxtLink>
-                <NuxtLink to="/auth" class="flex transition-all duration-500 hover:opacity-70"
+                <NuxtLink :to="authenticated ? '/profile' : '/auth'" class="flex transition-all duration-500 hover:opacity-70"
                     @click="isMenuShow = false">
                     <Icon class="text-3xl text-sky-500" name="material-symbols:person" />
                 </NuxtLink>
@@ -82,18 +73,16 @@
 /* открытие мобильного меню */
 const isMenuShow = ref(false) 
 
-
 /* закрытие мобильного меню */
 const nuxtApp = useNuxtApp()
 nuxtApp.hook('page:start', () => {
     isMenuShow.value = false
 })
 
-
 /* создание сообщений */
 const { messageTitle, messageType } = storeToRefs(useMessagesStore())
 
-
-/* проверка роли */
+/* авторизация */
 const userStore = useUserStore()
+const { authenticated } = storeToRefs(userStore)
 </script>
