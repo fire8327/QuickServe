@@ -1,0 +1,170 @@
+<template>
+    <div class="flex flex-col gap-6 grow items-center justify-center">
+        <FormKit @submit="save" type="form" :actions="false" messages-class="hidden" form-class="w-full flex flex-col gap-6 items-center justify-center text-[#1C1C1C] py-8 px-4 bg-[#2C2C2C] rounded-xl">
+            <p class="mainHeading">Изменить услугу</p>
+
+            <div class="flex items-center lg:items-start gap-4 max-lg:flex-col w-full md:w-2/3 lg:w-1/2">
+                <FormKit v-model="form.title" validation="required" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Название услуги" name="Название" outer-class="w-full" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
+            </div>
+
+            <div class="flex items-center lg:items-start gap-4 max-lg:flex-col w-full md:w-2/3 lg:w-1/2">
+                <FormKit type="select" v-model="form.category_id" validation="required" messages-class="text-[#E9556D] font-mono" name="Категория" :options="categoryOptions" outer-class="w-full" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
+            </div>
+
+            <div class="flex gap-4 flex-col w-full md:w-2/3 lg:w-1/2">
+                <FormKit type="number" v-model.number="form.price" min="0" validation="required|number" messages-class="text-[#E9556D] font-mono" placeholder="Цена (₽)" name="Цена" outer-class="w-full" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
+                <FormKit type="textarea" v-model="form.description" rows="5" messages-class="text-[#E9556D] font-mono" placeholder="Описание услуги" name="Описание" outer-class="w-full" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
+            </div>
+
+            <div class="relative w-full md:w-2/3 lg:w-1/2 group rounded-xl overflow-hidden" v-if="imagePreview">
+                <img :src="imagePreview" alt="" class="object-cover object-center aspect-square w-full">
+                <button type="button" @click="removeImage" class="absolute inset-0 bg-black/70 flex items-center justify-center transition-all duration-500 [@media(pointer:coarse)]:opacity-100 [@media(pointer:fine)]:opacity-0 group-hover:opacity-100">
+                    <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
+                </button>
+            </div>
+            <FormKit v-else @change="handleImageChange" accept="image/*" messages-class="text-[#E9556D] font-mono" label-class="text-white" file-list-class="text-white" no-files-class="text-white" type="file" label="Изображение" name="Изображение" outer-class="w-full md:w-2/3 lg:w-1/2" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
+
+            <button :disabled="isLoading" :class="{ 'opacity-50 cursor-not-allowed': isLoading }" type="submit" class="px-4 py-2 border border-sky-500 bg-sky-500 text-white rounded-full w-[200px] text-center transition-all duration-500 hover:text-sky-500 hover:bg-transparent">{{ isLoading ? 'Сохранение...' : 'Сохранить' }}</button>
+        </FormKit>
+    </div>
+</template>
+
+<script setup>
+/* SEO */
+useSeoMeta({ title: 'Изменить услугу', lang: 'ru' })
+
+/* зависимости */
+const route = useRoute()
+const router = useRouter()
+const supabase = useSupabaseClient()
+const { id: userId, isProvider } = useUserStore()
+const { showMessage } = useMessagesStore()
+
+/* форма */
+const form = ref({
+    title: '',
+    category_id: '',
+    price: null,
+    description: '',
+    image_url: ''
+})
+
+/* категории */
+const categoryOptions = ref([])
+
+/* загрузка и изображение */
+const isLoading = ref(false)
+const imageFile = ref(null)
+const imagePreview = ref('')
+const oldImageFileName = ref('')
+
+/* загрузка категорий */
+const loadCategories = async () => {
+    const { data, error } = await supabase
+        .from('categories')
+        .select('id, name')
+        .order('name', { ascending: true })
+    if (!error && data) {
+        categoryOptions.value = data.map(c => ({ label: c.name, value: c.id }))
+    }
+}
+
+/* загрузка услуги */
+const loadService = async () => {
+    const id = Number(route.params.id)
+    const { data, error } = await supabase
+        .from('services')
+        .select('*')
+        .eq('id', id)
+        .eq('provider_id', userId)
+        .single()
+    if (error) {
+        showMessage('Услуга не найдена или нет доступа', false)
+        return router.push('/profile')
+    }
+    form.value = {
+        title: data.title || '',
+        category_id: data.category_id || '',
+        price: data.price || 0,
+        description: data.description || '',
+        image_url: data.image_url || ''
+    }
+    oldImageFileName.value = data.image_url || ''
+
+    if (data.image_url) {
+        const { data: pub } = supabase.storage.from('files').getPublicUrl(`services/${data.image_url}`)
+        imagePreview.value = pub.publicUrl
+    }
+}
+
+/* изображение */
+const handleImageChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+        imageFile.value = file
+        const reader = new FileReader()
+        reader.onload = (ev) => {
+            imagePreview.value = ev.target.result
+        }
+        reader.readAsDataURL(file)
+    }
+}
+
+const removeImage = () => {
+    imageFile.value = null
+    imagePreview.value = ''
+    form.value.image_url = ''
+}
+
+/* сохранение */
+const save = async () => {
+    if (!isProvider) {
+        return showMessage('Только исполнитель может редактировать услуги', false)
+    }
+
+    isLoading.value = true
+    try {
+        let imageFileName = form.value.image_url
+
+        // если выбрано новое изображение — удаляем старое и грузим новое
+        if (imageFile.value) {
+            if (oldImageFileName.value) {
+                await supabase.storage.from('files').remove([`services/${oldImageFileName.value}`])
+            }
+            const extension = imageFile.value.name.split('.').pop()
+            const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${extension}`
+            const { error: uploadError } = await supabase.storage
+                .from('files')
+                .upload(`services/${fileName}`, imageFile.value)
+            if (uploadError) throw uploadError
+            imageFileName = fileName
+        }
+
+        const id = Number(route.params.id)
+        const { error: updError } = await supabase
+            .from('services')
+            .update({
+                title: form.value.title,
+                description: form.value.description,
+                price: form.value.price,
+                category_id: form.value.category_id,
+                image_url: imageFileName
+            })
+            .eq('id', id)
+            .eq('provider_id', userId)
+        if (updError) throw updError
+
+        showMessage('Изменения сохранены!', true)
+        await router.push('/profile')
+    } catch (error) {
+        showMessage('Ошибка при сохранении: ' + (error?.message || ''), false)
+    } finally {
+        isLoading.value = false
+    }
+}
+
+onMounted(async () => {
+    await loadCategories()
+    await loadService()
+})
+</script>
