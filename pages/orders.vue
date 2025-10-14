@@ -64,20 +64,33 @@ const loadOrders = async () => {
 }
 
 const accept = async (o) => {
-    const { error } = await supabase.from('orders').update({ status: 'in_progress' }).eq('id', o.id).eq('provider_id', userId)
+    const { error } = await supabase
+        .from('orders')
+        .update({ status: 'in_progress' })
+        .eq('id', o.id)
+        .eq('provider_id', userId)
+        .eq('status', 'new')
     if (error) return showMessage('Ошибка: не удалось принять заказ', false)
     await loadOrders()
 }
 
 const finish = async (o) => {
-    const { error } = await supabase.from('orders').update({ status: 'done' }).eq('id', o.id).eq('customer_id', userId)
+    const { error } = await supabase
+        .from('orders')
+        .update({ status: 'done' })
+        .eq('id', o.id)
+        .eq('customer_id', userId)
     if (error) return showMessage('Ошибка: не удалось завершить заказ', false)
     await loadOrders()
 }
 
 const cancel = async (o) => {
     const matcher = isProvider ? { provider_id: userId } : { customer_id: userId }
-    const { error } = await supabase.from('orders').update({ status: 'canceled' }).eq('id', o.id).match(matcher)
+    const { error } = await supabase
+        .from('orders')
+        .update({ status: 'canceled' })
+        .eq('id', o.id)
+        .match(matcher)
     if (error) return showMessage(isProvider ? 'Ошибка: не удалось отказаться' : 'Ошибка: не удалось отменить заказ', false)
     await loadOrders()
 }

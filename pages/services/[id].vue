@@ -76,6 +76,7 @@
             <FormKit @submit="submitReview" type="form" :actions="false" messages-class="hidden" form-class="flex flex-col gap-4 text-[#1C1C1C]">
                 <div class="bg-white rounded-xl p-4 shadow-md flex flex-col gap-4">
                     <div class="flex items-center gap-4">
+                        <p class="text-lg font-mono font-semibold">Оценка</p>
                         <FormKit type="number" min="1" max="5" v-model.number="reviewForm.rating" validation="required|number" name="Оценка" placeholder="Оценка (1-5)" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
                     </div>
                     <FormKit type="textarea" rows="4" v-model="reviewForm.text" name="Комментарий" placeholder="Комментарий" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>

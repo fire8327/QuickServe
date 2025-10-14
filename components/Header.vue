@@ -23,6 +23,9 @@
                 </NuxtLink>
             </div>
             <div class="flex items-center gap-4">
+              <NuxtLink v-if="authenticated" to="/orders" class="flex transition-all duration-500 hover:opacity-70 max-lg:hidden" title="Заказы">
+                    <Icon class="text-3xl text-sky-500" name="material-symbols:orders"/>
+                </NuxtLink>
                 <NuxtLink :to="authenticated ? '/profile' : '/auth'" class="flex transition-all duration-500 hover:opacity-70 max-lg:hidden" :title="authenticated ? 'Профиль' : 'Войти'">
                     <Icon class="text-3xl text-sky-500" name="material-symbols:person"/>
                 </NuxtLink>
@@ -52,10 +55,15 @@
                     to="/about" @click="isMenuShow = false">
                     О нас
                 </NuxtLink>
-                <NuxtLink :to="authenticated ? '/profile' : '/auth'" class="flex transition-all duration-500 hover:opacity-70"
-                    @click="isMenuShow = false">
-                    <Icon class="text-3xl text-sky-500" name="material-symbols:person" />
-                </NuxtLink>
+                <div class="flex items-center gap-4">
+                    <NuxtLink :to="authenticated ? '/profile' : '/auth'" class="flex transition-all duration-500 hover:opacity-70"
+                        @click="isMenuShow = false">
+                        <Icon class="text-3xl text-sky-500" name="material-symbols:person" />
+                    </NuxtLink>
+                    <NuxtLink v-if="authenticated" to="/orders" class="flex transition-all duration-500 hover:opacity-70 max-lg:hidden" title="Заказы">
+                        <Icon class="text-3xl text-sky-500" name="material-symbols:orders"/>
+                    </NuxtLink>
+                </div>
             </div>
         </div>
         <div @click="isMenuShow = false" class="lg:hidden fixed z-[4] inset-0 bg-black/30"
