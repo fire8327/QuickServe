@@ -1,31 +1,34 @@
 <template>
     <div class="flex flex-col gap-6 grow items-center justify-center">
-        <FormKit @submit="save" type="form" :actions="false" messages-class="hidden" form-class="w-full flex flex-col gap-6 items-center justify-center text-[#1C1C1C] py-8 px-4 bg-[#2C2C2C] rounded-xl">
-            <p class="mainHeading">Изменить услугу</p>
+        <Loader v-if="isBooting" />
+        <template v-else>
+            <FormKit @submit="save" type="form" :actions="false" messages-class="hidden" form-class="w-full flex flex-col gap-6 items-center justify-center text-[#1C1C1C] py-8 px-4 bg-[#2C2C2C] rounded-xl">
+                <p class="mainHeading">Изменить услугу</p>
 
-            <div class="flex items-center lg:items-start gap-4 max-lg:flex-col w-full md:w-2/3 lg:w-1/2">
-                <FormKit v-model="form.title" validation="required" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Название услуги" name="Название" outer-class="w-full" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
-            </div>
+                <div class="flex items-center lg:items-start gap-4 max-lg:flex-col w-full md:w-2/3 lg:w-1/2">
+                    <FormKit v-model="form.title" validation="required" messages-class="text-[#E9556D] font-mono" type="text" placeholder="Название услуги" name="Название" outer-class="w-full" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
+                </div>
 
-            <div class="flex items-center lg:items-start gap-4 max-lg:flex-col w-full md:w-2/3 lg:w-1/2">
-                <FormKit type="select" v-model="form.category_id" validation="required" messages-class="text-[#E9556D] font-mono" name="Категория" :options="categoryOptions" outer-class="w-full" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
-            </div>
+                <div class="flex items-center lg:items-start gap-4 max-lg:flex-col w-full md:w-2/3 lg:w-1/2">
+                    <FormKit type="select" v-model="form.category_id" validation="required" messages-class="text-[#E9556D] font-mono" name="Категория" :options="categoryOptions" outer-class="w-full" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
+                </div>
 
-            <div class="flex gap-4 flex-col w-full md:w-2/3 lg:w-1/2">
-                <FormKit type="number" v-model.number="form.price" min="0" validation="required|number" messages-class="text-[#E9556D] font-mono" placeholder="Цена (₽)" name="Цена" outer-class="w-full" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
-                <FormKit type="textarea" v-model="form.description" rows="5" messages-class="text-[#E9556D] font-mono" placeholder="Описание услуги" name="Описание" outer-class="w-full" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
-            </div>
+                <div class="flex gap-4 flex-col w-full md:w-2/3 lg:w-1/2">
+                    <FormKit type="number" v-model.number="form.price" min="0" validation="required|number" messages-class="text-[#E9556D] font-mono" placeholder="Цена (₽)" name="Цена" outer-class="w-full" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
+                    <FormKit type="textarea" v-model="form.description" rows="5" messages-class="text-[#E9556D] font-mono" placeholder="Описание услуги" name="Описание" outer-class="w-full" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
+                </div>
 
-            <div class="relative w-full md:w-2/3 lg:w-1/2 group rounded-xl overflow-hidden" v-if="imagePreview">
-                <img :src="imagePreview" alt="" class="object-cover object-center aspect-square w-full">
-                <button type="button" @click="removeImage" class="absolute inset-0 bg-black/70 flex items-center justify-center transition-all duration-500 [@media(pointer:coarse)]:opacity-100 [@media(pointer:fine)]:opacity-0 group-hover:opacity-100">
-                    <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
-                </button>
-            </div>
-            <FormKit v-else @change="handleImageChange" accept="image/*" messages-class="text-[#E9556D] font-mono" label-class="text-white" file-list-class="text-white" no-files-class="text-white" type="file" label="Изображение" name="Изображение" outer-class="w-full md:w-2/3 lg:w-1/2" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
+                <div class="relative w-full md:w-2/3 lg:w-1/2 group rounded-xl overflow-hidden" v-if="imagePreview">
+                    <img :src="imagePreview" alt="" class="object-cover object-center aspect-square w-full">
+                    <button type="button" @click="removeImage" class="absolute inset-0 bg-black/70 flex items-center justify-center transition-all duration-500 [@media(pointer:coarse)]:opacity-100 [@media(pointer:fine)]:opacity-0 group-hover:opacity-100">
+                        <Icon class="text-3xl text-red-500" name="material-symbols:delete-outline"/>
+                    </button>
+                </div>
+                <FormKit v-else @change="handleImageChange" accept="image/*" messages-class="text-[#E9556D] font-mono" label-class="text-white" file-list-class="text-white" no-files-class="text-white" type="file" label="Изображение" name="Изображение" outer-class="w-full md:w-2/3 lg:w-1/2" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
 
-            <button :disabled="isLoading" :class="{ 'opacity-50 cursor-not-allowed': isLoading }" type="submit" class="px-4 py-2 border border-sky-500 bg-sky-500 text-white rounded-full w-[200px] text-center transition-all duration-500 hover:text-sky-500 hover:bg-transparent">{{ isLoading ? 'Сохранение...' : 'Сохранить' }}</button>
-        </FormKit>
+                <button :disabled="isLoading" :class="{ 'opacity-50 cursor-not-allowed': isLoading }" type="submit" class="px-4 py-2 border border-sky-500 bg-sky-500 text-white rounded-full w-[200px] text-center transition-all duration-500 hover:text-sky-500 hover:bg-transparent">{{ isLoading ? 'Сохранение...' : 'Сохранить' }}</button>
+            </FormKit>
+        </template>
     </div>
 </template>
 
@@ -53,6 +56,7 @@ const form = ref({
 const categoryOptions = ref([])
 
 /* загрузка и изображение */
+const isBooting = ref(true)
 const isLoading = ref(false)
 const imageFile = ref(null)
 const imagePreview = ref('')
@@ -166,5 +170,6 @@ const save = async () => {
 onMounted(async () => {
     await loadCategories()
     await loadService()
+    isBooting.value = false
 })
 </script>
