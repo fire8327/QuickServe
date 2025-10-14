@@ -17,6 +17,10 @@
                     class="px-3 py-1 bg-[#3C3C3C] rounded-xl shadow-md transition-all duration-500 hover:bg-[#000000]/15 hover:border-sky-500 border border-transparent">
                     Услуги
                 </NuxtLink>
+                <NuxtLink to="/chats"
+                    class="px-3 py-1 bg-[#3C3C3C] rounded-xl shadow-md transition-all duration-500 hover:bg-[#000000]/15 hover:border-sky-500 border border-transparent">
+                    Чаты
+                </NuxtLink>
                 <NuxtLink to="/about"
                     class="px-3 py-1 bg-[#3C3C3C] rounded-xl shadow-md transition-all duration-500 hover:bg-[#000000]/15 hover:border-sky-500 border border-transparent">
                     О нас
@@ -49,6 +53,11 @@
                     class="flex flex-col after:w-0 after:h-px after:bg-white after:transition-all after:duration-500 hover:after:w-full"
                     to="/services" @click="isMenuShow = false">
                     Услуги
+                </NuxtLink>
+                <NuxtLink
+                    class="flex flex-col after:w-0 after:h-px after:bg-white after:transition-all after:duration-500 hover:after:w-full"
+                    to="/chats" @click="isMenuShow = false">
+                    Чаты
                 </NuxtLink>
                 <NuxtLink
                     class="flex flex-col after:w-0 after:h-px after:bg-white after:transition-all after:duration-500 hover:after:w-full"

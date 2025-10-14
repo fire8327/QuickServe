@@ -21,6 +21,7 @@
                         <p class="text-gray-800 whitespace-pre-line">{{ service?.description || 'Описание отсутствует' }}</p>
                     </div>
                     <div class="flex items-center justify-end gap-3">
+                        <button v-if="canContact" @click="startChat" class="px-4 py-2 rounded-full border border-sky-500 text-sky-500 transition-all duration-300 hover:bg-sky-500 hover:text-white">Связаться</button>
                         <button v-if="canOrder" @click="createOrder" class="px-4 py-2 rounded-full bg-sky-500 text-white transition-all duration-300 hover:opacity-80">Заказать</button>
                     </div>
                 </div>
@@ -129,6 +130,13 @@ const canOrder = computed(() => {
     const ownerId = service.value?.provider_id
     if (!authenticated) return true
     return !isProvider && userId !== ownerId
+})
+
+/* можно ли связаться (только авторизованные и не владелец услуги) */
+const canContact = computed(() => {
+    if (!authenticated || !service.value) return false
+    const ownerId = service.value.provider_id
+    return userId && userId !== ownerId
 })
 
 /* форматирование цены */
@@ -254,6 +262,57 @@ const createOrder = async () => {
         .insert({ service_id: id, customer_id: userId, provider_id: providerId, status: 'new' })
     if (error) return showMessage('Ошибка создания заказа', false)
     showMessage('Заказ создан!', true)
+}
+
+/* создание или переход к чату */
+const startChat = async () => {
+    if (!authenticated) {
+        showMessage('Войдите, чтобы связаться с исполнителем', false)
+        return router.push('/auth')
+    }
+
+    const serviceId = Number(route.params.id)
+    const providerId = service.value?.provider_id
+    if (!providerId) return
+
+    try {
+        // Определяем роли: кто заказчик, кто исполнитель
+        const customerId = userId
+        const actualProviderId = providerId
+
+        // Проверяем, существует ли уже чат
+        const { data: existingChat, error: checkError } = await supabase
+            .from('chats')
+            .select('id')
+            .eq('customer_id', customerId)
+            .eq('provider_id', actualProviderId)
+            .eq('service_id', serviceId)
+            .maybeSingle()
+
+        if (checkError) throw checkError
+
+        if (existingChat) {
+            // Чат уже существует, переходим к нему
+            router.push(`/chat/${existingChat.id}`)
+        } else {
+            // Создаём новый чат
+            const { data: newChat, error: createError } = await supabase
+                .from('chats')
+                .insert({
+                    customer_id: customerId,
+                    provider_id: actualProviderId,
+                    service_id: serviceId
+                })
+                .select('id')
+                .single()
+
+            if (createError) throw createError
+            router.push(`/chat/${newChat.id}`)
+        }
+    } catch (error) {
+        console.error('Ошибка создания чата:', error)
+        showMessage('Ошибка при создании чата', false)
+    }
 }
 
 onMounted(async () => {
