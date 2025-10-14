@@ -221,15 +221,8 @@ const sendMessage = async () => {
 
         if (error) throw error
 
-        // Добавляем сообщение в список
-        messages.value.push(data)
-
-        // Скролл к новому сообщению
-        nextTick(() => {
-            if (messagesContainer.value) {
-                messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
-            }
-        })
+        // Сообщение будет добавлено через real-time подписку
+        // Не добавляем его вручную, чтобы избежать дублирования
 
     } catch (error) {
         console.error('Ошибка отправки сообщения:', error)
@@ -259,15 +252,20 @@ const setupRealtime = () => {
             }, 
             (payload) => {
                 console.log('Новое сообщение:', payload.new)
-                // Добавляем новое сообщение в список
-                messages.value.push(payload.new)
                 
-                // Скролл к новому сообщению
-                nextTick(() => {
-                    if (messagesContainer.value) {
-                        messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
-                    }
-                })
+                // Проверяем, что сообщение еще не существует в списке
+                const messageExists = messages.value.some(msg => msg.id === payload.new.id)
+                if (!messageExists) {
+                    // Добавляем новое сообщение в список
+                    messages.value.push(payload.new)
+                    
+                    // Скролл к новому сообщению
+                    nextTick(() => {
+                        if (messagesContainer.value) {
+                            messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
+                        }
+                    })
+                }
 
                 // Отмечаем как прочитанное, если сообщение не от текущего пользователя
                 if (payload.new.sender_id !== userId) {
