@@ -22,22 +22,22 @@
     <!-- Статистика -->
     <div class="flex flex-col gap-6">
         <p class="mainHeading">Статистика</p>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div class="bg-white rounded-lg p-4 text-center">
-                <div class="text-2xl font-bold text-yellow-500">{{ averageRating }}</div>
-                <div class="text-sm text-gray-600">{{ isProvider ? 'Рейтинг' : 'Строгость' }}</div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="flex flex-col gap-2 rounded-xl bg-[#3C3C3C] p-4 items-center text-center shadow-[0px_0px_20px_-13px_black]">
+                <p class="px-4 py-1 text-2xl font-mono bg-amber-500 text-white rounded-lg">{{ averageRating }}</p>
+                <p class="text-white font-mono">{{ isProvider ? 'Рейтинг' : 'Строгость' }}</p>
             </div>
-            <div class="bg-white rounded-lg p-4 text-center">
-                <div class="text-2xl font-bold text-blue-500">{{ ordersCount }}</div>
-                <div class="text-sm text-gray-600">Заказов</div>
+            <div class="flex flex-col gap-2 rounded-xl bg-[#3C3C3C] p-4 items-center text-center shadow-[0px_0px_20px_-13px_black]">
+                <p class="px-4 py-1 text-2xl font-mono bg-sky-500 text-white rounded-lg">{{ ordersCount }}</p>
+                <p class="text-white font-mono">Заказов</p>
             </div>
-            <div class="bg-white rounded-lg p-4 text-center">
-                <div class="text-2xl font-bold text-green-500">{{ reviewsCount }}</div>
-                <div class="text-sm text-gray-600">Отзывов</div>
+            <div class="flex flex-col gap-2 rounded-xl bg-[#3C3C3C] p-4 items-center text-center shadow-[0px_0px_20px_-13px_black]">
+                <p class="px-4 py-1 text-2xl font-mono bg-green-500 text-white rounded-lg">{{ reviewsCount }}</p>
+                <p class="text-white font-mono">Отзывов</p>
             </div>
-            <div class="bg-white rounded-lg p-4 text-center">
-                <div class="text-2xl font-bold text-purple-500">{{ daysWithUs }}</div>
-                <div class="text-sm text-gray-600">Дней с нами</div>
+            <div class="flex flex-col gap-2 rounded-xl bg-[#3C3C3C] p-4 items-center text-center shadow-[0px_0px_20px_-13px_black]">
+                <p class="px-4 py-1 text-2xl font-mono bg-violet-500 text-white rounded-lg">{{ daysWithUs }}</p>
+                <p class="text-white font-mono">Дней с нами</p>
             </div>
         </div>
     </div>
