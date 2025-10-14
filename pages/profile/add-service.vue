@@ -11,9 +11,9 @@
                 <FormKit type="select" v-model="form.category_id" validation="required" messages-class="text-[#E9556D] font-mono" name="Категория" :options="categoryOptions" outer-class="w-full" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
             </div>
 
-            <div class="flex items-center lg:items-start gap-4 max-lg:flex-col w-full md:w-2/3 lg:w-1/2">
-                <FormKit type="number" v-model.number="form.price" min="0" validation="required|number" messages-class="text-[#E9556D] font-mono" placeholder="Цена (₽)" name="Цена" outer-class="w-full lg:w-1/2" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
-                <FormKit type="text" v-model="form.description" messages-class="text-[#E9556D] font-mono" placeholder="Короткое описание" name="Описание" outer-class="w-full lg:w-1/2" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
+            <div class="flex gap-4 flex-col w-full md:w-2/3 lg:w-1/2">
+                <FormKit type="number" v-model.number="form.price" min="0" validation="required|number" messages-class="text-[#E9556D] font-mono" placeholder="Цена (₽)" name="Цена" outer-class="w-full" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
+                <FormKit type="textarea" v-model="form.description" rows="5" messages-class="text-[#E9556D] font-mono" placeholder="Описание услуги" name="Описание" outer-class="w-full" input-class="focus:outline-none px-4 py-2 bg-white rounded-xl border border-transparent w-full transition-all duration-500 focus:border-sky-500 shadow-md"/>
             </div>
 
             <div class="relative w-full md:w-2/3 lg:w-1/2 group rounded-xl overflow-hidden" v-if="imagePreview">
